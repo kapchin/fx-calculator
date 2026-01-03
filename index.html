@@ -1,0 +1,493 @@
+<!doctype html>
+<html lang="bg">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>BGN ⇄ EUR • Ресто • Марж (консултанти) • ДДС</title>
+  <style>
+    :root { --bg:#0b1020; --card:#121a33; --txt:#e9eefc; --mut:#a8b3d6; --acc:#7aa2ff; --ok:#3ddc97; --bad:#ff6b6b; --warn:#ffcc66; }
+    body { margin:0; font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial; background: radial-gradient(1200px 600px at 20% 0%, #16224a, var(--bg)); color:var(--txt); }
+    .wrap { max-width: 980px; margin: 0 auto; padding: 18px; }
+    h1 { font-size: 20px; margin: 6px 0 12px; }
+    .rate { color: var(--mut); font-size: 13px; margin-bottom: 14px; }
+    .grid { display:grid; gap:14px; grid-template-columns: 1fr; }
+    @media (min-width: 980px){ .grid { grid-template-columns: 1fr 1fr; } }
+    .card { background: rgba(18,26,51,.92); border: 1px solid rgba(122,162,255,.18); border-radius: 14px; padding: 14px; box-shadow: 0 10px 25px rgba(0,0,0,.22); }
+    .card h2 { margin: 0 0 10px; font-size: 16px; }
+    label { display:block; font-size: 12px; color: var(--mut); margin: 10px 0 6px; }
+    input, select { width:100%; padding: 10px 12px; border-radius: 10px; border:1px solid rgba(255,255,255,.12); background: rgba(8,12,25,.7); color: var(--txt); outline:none; }
+    input:focus, select:focus { border-color: rgba(122,162,255,.6); }
+    .row { display:grid; grid-template-columns: 1fr 120px; gap:10px; }
+    .btns { display:flex; gap:10px; flex-wrap:wrap; margin-top: 12px; }
+    button { padding: 10px 12px; border-radius: 12px; border:1px solid rgba(122,162,255,.35); background: rgba(122,162,255,.15); color: var(--txt); cursor:pointer; font-weight:600; }
+    button:hover { background: rgba(122,162,255,.22); }
+    .ghost { background: transparent; }
+    .out { margin-top: 12px; padding: 12px; border-radius: 12px; background: rgba(8,12,25,.55); border:1px solid rgba(255,255,255,.10); }
+    .big { font-size: 18px; font-weight: 800; }
+    .mut { color: var(--mut); font-size: 13px; margin-top: 6px; line-height: 1.35; }
+    .ok { color: var(--ok); }
+    .bad { color: var(--bad); }
+    .warn { color: var(--warn); }
+    .footer { margin-top: 14px; color: var(--mut); font-size: 12px; }
+    .pill { display:inline-block; padding:4px 8px; border-radius: 999px; border:1px solid rgba(255,255,255,.12); background: rgba(255,255,255,.06); }
+    .hidden { display:none; }
+    .hr { height:1px; background: rgba(255,255,255,.10); margin: 10px 0; }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <h1>💱 BGN ⇄ EUR • 🪙 Ресто • 📈 Марж (консултанти) • 🧾 ДДС</h1>
+    <div class="rate">
+      Курс: <span class="pill">1 EUR = 1.95583 BGN</span>
+      • ДДС: <span class="pill">20%</span>
+      • Закръгляне: 2 знака
+    </div>
+
+    <div class="grid">
+
+      <div class="card">
+        <h2>Конвертор</h2>
+
+        <label>Сума</label>
+        <div class="row">
+          <input id="amt" inputmode="decimal" placeholder="напр. 12.50" />
+          <select id="fromCcy">
+            <option value="BGN">BGN</option>
+            <option value="EUR">EUR</option>
+          </select>
+        </div>
+
+        <label>Към</label>
+        <select id="toCcy">
+          <option value="EUR">EUR</option>
+          <option value="BGN">BGN</option>
+        </select>
+
+        <div class="btns">
+          <button id="btnConvert">Convert</button>
+          <button class="ghost" id="btnSwap">Swap</button>
+          <button class="ghost" id="btnFill1">10 BGN</button>
+          <button class="ghost" id="btnFill2">10 EUR</button>
+        </div>
+
+        <div class="out" id="convOut">
+          <div class="mut">Въведи сума и натисни Convert.</div>
+        </div>
+      </div>
+
+      <div class="card">
+        <h2>Ресто (плащаш в една валута, връщаш в друга)</h2>
+
+        <label>Цена</label>
+        <div class="row">
+          <input id="price" inputmode="decimal" placeholder="напр. 18.50" />
+          <select id="priceCcy">
+            <option value="BGN">BGN</option>
+            <option value="EUR">EUR</option>
+          </select>
+        </div>
+
+        <label>Платено</label>
+        <div class="row">
+          <input id="paid" inputmode="decimal" placeholder="напр. 20" />
+          <select id="paidCcy">
+            <option value="EUR">EUR</option>
+            <option value="BGN">BGN</option>
+          </select>
+        </div>
+
+        <label>Връщам в</label>
+        <select id="returnCcy">
+          <option value="BGN">BGN</option>
+          <option value="EUR">EUR</option>
+        </select>
+
+        <div class="btns">
+          <button id="btnChange">Calculate change</button>
+          <button class="ghost" id="btnAutoReturn">Auto (другата)</button>
+          <button class="ghost" id="btnExample">Пример</button>
+        </div>
+
+        <div class="out" id="changeOut">
+          <div class="mut">Попълни цена и платено и натисни Calculate change.</div>
+        </div>
+      </div>
+
+      <div class="card" id="margin">
+        <h2>📈 Марж (целеви / проверка) — Консултанти + ДДС</h2>
+
+        <div class="btns">
+          <button id="mModeTarget">Target</button>
+          <button class="ghost" id="mModeCheck">Check</button>
+          <button class="ghost" id="mClear">Clear</button>
+        </div>
+
+        <div id="mTargetBox">
+          <label>Разход към мен (Cost to me)</label>
+          <div class="row">
+            <input id="mCost" inputmode="decimal" placeholder="напр. 7500" />
+            <select id="mCostCcy">
+              <option value="BGN">BGN</option>
+              <option value="EUR">EUR</option>
+            </select>
+          </div>
+
+          <label>Консултанти / трети лица (Consultants)</label>
+          <input id="mConsult" inputmode="decimal" placeholder="напр. 2500 (ако няма — остави празно)" />
+
+          <label>Целеви марж % (Margin, без ДДС)</label>
+          <input id="mTarget" inputmode="decimal" placeholder="напр. 20" />
+
+          <div class="btns">
+            <button id="mCalcTarget">Calculate selling price</button>
+            <button class="ghost" id="mExampleTarget">Пример</button>
+          </div>
+
+          <div class="mut">
+            Марж (без ДДС): <span class="pill">S = B / (1 − m)</span>, B = (Cost to me + Consultants)
+          </div>
+        </div>
+
+        <div id="mCheckBox" class="hidden">
+          <label>Разход към мен (Cost to me)</label>
+          <div class="row">
+            <input id="mCost2" inputmode="decimal" placeholder="напр. 7500" />
+            <select id="mCcy2">
+              <option value="BGN">BGN</option>
+              <option value="EUR">EUR</option>
+            </select>
+          </div>
+
+          <label>Консултанти / трети лица (Consultants)</label>
+          <input id="mConsult2" inputmode="decimal" placeholder="напр. 2500" />
+
+          <label>Цена към клиента</label>
+          <input id="mSell2" inputmode="decimal" placeholder="напр. 12500" />
+
+          <label>Цената е…</label>
+          <select id="mSellMode2">
+            <option value="ex">без ДДС</option>
+            <option value="inc">с ДДС</option>
+          </select>
+
+          <label>Целеви марж % (по желание за сравнение)</label>
+          <input id="mTarget2" inputmode="decimal" placeholder="напр. 20" />
+
+          <div class="btns">
+            <button id="mCalcCheck">Calculate margin</button>
+            <button class="ghost" id="mExampleCheck">Пример</button>
+          </div>
+
+          <div class="mut">
+            Марж = (S − B) / S, където S е без ДДС.
+          </div>
+        </div>
+
+        <div class="out" id="mOut">
+          <div class="mut">Избери Target или Check.</div>
+        </div>
+      </div>
+
+    </div>
+
+    <div class="footer">
+      Работи локално в браузъра (няма бекенд). Препоръчително: достъп само през VPN/LAN.
+    </div>
+  </div>
+
+<script>
+  const RATE = 1.95583;
+  const VAT = 0.20;
+
+  const q2 = (n) => Math.round((n + Number.EPSILON) * 100) / 100;
+
+  const parseNum = (v) => {
+    if (v === null || v === undefined) return NaN;
+    const s = String(v).trim();
+    if (!s) return NaN;
+    return Number(s.replace(/\s+/g,'').replace(',', '.'));
+  };
+
+  const toBGN = (amt, ccy) => ccy === 'BGN' ? amt : (amt * RATE);
+  const fromBGN = (amtBGN, ccy) => ccy === 'BGN' ? amtBGN : (amtBGN / RATE);
+
+  const fmtBoth = (amt, ccy) => {
+    const bgn = toBGN(amt, ccy);
+    return `${q2(fromBGN(bgn,'BGN'))} BGN / ${q2(fromBGN(bgn,'EUR'))} EUR`;
+  };
+
+  // ---------------- Converter ----------------
+  const amt = document.getElementById('amt');
+  const fromCcy = document.getElementById('fromCcy');
+  const toCcy = document.getElementById('toCcy');
+  const convOut = document.getElementById('convOut');
+
+  const renderConv = () => {
+    const a = parseNum(amt.value);
+    const f = fromCcy.value;
+    const t = toCcy.value;
+
+    if (!Number.isFinite(a)) {
+      convOut.innerHTML = `<div class="bad">❌ Невалидна сума.</div>`;
+      return;
+    }
+
+    const bgn = toBGN(a, f);
+    const out = fromBGN(bgn, t);
+
+    convOut.innerHTML = `
+      <div class="big">💱 ${q2(a)} ${f} = ${q2(out)} ${t}</div>
+      <div class="mut">Еквивалент: ${q2(fromBGN(bgn,'BGN'))} BGN / ${q2(fromBGN(bgn,'EUR'))} EUR</div>
+    `;
+  };
+
+  document.getElementById('btnConvert').onclick = renderConv;
+  document.getElementById('btnSwap').onclick = () => {
+    const f = fromCcy.value;
+    fromCcy.value = toCcy.value;
+    toCcy.value = f;
+    renderConv();
+  };
+  document.getElementById('btnFill1').onclick = () => { amt.value = "10"; fromCcy.value = "BGN"; toCcy.value = "EUR"; renderConv(); };
+  document.getElementById('btnFill2').onclick = () => { amt.value = "10"; fromCcy.value = "EUR"; toCcy.value = "BGN"; renderConv(); };
+  amt.addEventListener('keydown', (e)=>{ if(e.key==='Enter') renderConv(); });
+
+  // ---------------- Change ----------------
+  const price = document.getElementById('price');
+  const priceCcy = document.getElementById('priceCcy');
+  const paid = document.getElementById('paid');
+  const paidCcy = document.getElementById('paidCcy');
+  const returnCcy = document.getElementById('returnCcy');
+  const changeOut = document.getElementById('changeOut');
+
+  const autoReturn = () => {
+    returnCcy.value = (paidCcy.value === 'BGN') ? 'EUR' : 'BGN';
+  };
+
+  const renderChange = () => {
+    const p = parseNum(price.value);
+    const pc = priceCcy.value;
+    const pay = parseNum(paid.value);
+    const payc = paidCcy.value;
+    const rc = returnCcy.value;
+
+    if (!Number.isFinite(p) || !Number.isFinite(pay)) {
+      changeOut.innerHTML = `<div class="bad">❌ Невалидна цена или платено.</div>`;
+      return;
+    }
+
+    const pBGN = toBGN(p, pc);
+    const payBGN = toBGN(pay, payc);
+    const diffBGN = payBGN - pBGN;
+
+    // Totals in both currencies
+    const priceBoth = `${q2(fromBGN(pBGN,'BGN'))} BGN / ${q2(fromBGN(pBGN,'EUR'))} EUR`;
+    const paidBoth  = `${q2(fromBGN(payBGN,'BGN'))} BGN / ${q2(fromBGN(payBGN,'EUR'))} EUR`;
+
+    if (diffBGN < 0) {
+      const missingBGN = -diffBGN;
+      changeOut.innerHTML = `
+        <div class="bad big">❌ Недостатъчно плащане</div>
+        <div class="mut"><b>Цена:</b> ${priceBoth}</div>
+        <div class="mut"><b>Платено:</b> ${paidBoth}</div>
+        <div class="hr"></div>
+        <div class="mut"><b>Липсват:</b> ${q2(missingBGN)} BGN / ${q2(fromBGN(missingBGN,'EUR'))} EUR</div>
+      `;
+      return;
+    }
+
+    const changeInReturn = fromBGN(diffBGN, rc);
+    const changeBoth = `${q2(fromBGN(diffBGN,'BGN'))} BGN / ${q2(fromBGN(diffBGN,'EUR'))} EUR`;
+
+    changeOut.innerHTML = `
+      <div class="ok big">✅ Ресто: ${q2(changeInReturn)} ${rc}</div>
+      <div class="mut"><b>Цена:</b> ${priceBoth}</div>
+      <div class="mut"><b>Платено:</b> ${paidBoth}</div>
+      <div class="hr"></div>
+      <div class="mut"><b>Ресто (еквивалент):</b> ${changeBoth}</div>
+    `;
+  };
+
+  document.getElementById('btnAutoReturn').onclick = () => { autoReturn(); renderChange(); };
+  document.getElementById('btnChange').onclick = renderChange;
+  document.getElementById('btnExample').onclick = () => {
+    price.value = "18.50"; priceCcy.value = "BGN";
+    paid.value = "20"; paidCcy.value = "EUR";
+    autoReturn();
+    renderChange();
+  };
+
+  // ---------------- Margin (Target / Check) ----------------
+  const mTargetBox = document.getElementById('mTargetBox');
+  const mCheckBox  = document.getElementById('mCheckBox');
+  const mOut = document.getElementById('mOut');
+
+  const mCost = document.getElementById('mCost');
+  const mCostCcy = document.getElementById('mCostCcy');
+  const mConsult = document.getElementById('mConsult');
+  const mTarget = document.getElementById('mTarget');
+
+  const mCost2 = document.getElementById('mCost2');
+  const mCcy2  = document.getElementById('mCcy2');
+  const mConsult2 = document.getElementById('mConsult2');
+  const mSell2 = document.getElementById('mSell2');
+  const mSellMode2 = document.getElementById('mSellMode2');
+  const mTarget2 = document.getElementById('mTarget2');
+
+  const setMode = (mode) => {
+    const tBtn = document.getElementById('mModeTarget');
+    const cBtn = document.getElementById('mModeCheck');
+
+    if (mode === 'target') {
+      mTargetBox.classList.remove('hidden');
+      mCheckBox.classList.add('hidden');
+      tBtn.classList.remove('ghost');
+      cBtn.classList.add('ghost');
+      mOut.innerHTML = `<div class="mut">Въведи разход към мен, консултанти (по желание) и целеви марж %.</div>`;
+    } else {
+      mTargetBox.classList.add('hidden');
+      mCheckBox.classList.remove('hidden');
+      tBtn.classList.add('ghost');
+      cBtn.classList.remove('ghost');
+      mOut.innerHTML = `<div class="mut">Въведи разход, консултанти и цена към клиента (с/без ДДС), за да видиш реалния марж.</div>`;
+    }
+  };
+
+  const warnIcon = (cond) => cond ? `<span class="warn">⚠️</span>` : "";
+
+  const calcTargetMargin = () => {
+    const costToMe = parseNum(mCost.value);
+    const ccy  = mCostCcy.value;
+    const consultants = Number.isFinite(parseNum(mConsult.value)) ? parseNum(mConsult.value) : 0;
+    const targ = parseNum(mTarget.value);
+
+    if (!Number.isFinite(costToMe) || !Number.isFinite(targ)) {
+      mOut.innerHTML = `<div class="bad">❌ Невалиден разход или марж.</div>`;
+      return;
+    }
+
+    const m = targ / 100;
+    if (m <= 0 || m >= 0.99) {
+      mOut.innerHTML = `<div class="bad">❌ Маржът трябва да е между 0 и 99%.</div>`;
+      return;
+    }
+
+    const baseCost = costToMe + consultants;           // B (без ДДС)
+    const sellEx = baseCost / (1 - m);                 // S (без ДДС)
+    const sellInc = sellEx * (1 + VAT);
+
+    const profitTotal = sellEx - baseCost;             // обща печалба над B
+    const firmProfit  = sellEx - costToMe - consultants; // печалба за фирмата (над costToMe и след консултанти)
+
+    const isWarn = consultants > firmProfit;
+
+    // equivalents
+    const sellBGN = toBGN(sellEx, ccy);
+    const sellIncBGN = toBGN(sellInc, ccy);
+
+    mOut.innerHTML = `
+      <div class="ok big">✅ Цена към клиента (без ДДС): ${q2(sellEx)} ${ccy}</div>
+      <div class="mut"><b>Цена с ДДС:</b> ${q2(sellInc)} ${ccy}</div>
+      <div class="hr"></div>
+      <div class="mut"><b>Cost to me:</b> ${q2(costToMe)} ${ccy}</div>
+      <div class="mut"><b>Консултанти:</b> ${q2(consultants)} ${ccy}</div>
+      <div class="mut"><b>Base (Cost+Consultants):</b> ${q2(baseCost)} ${ccy}</div>
+      <div class="hr"></div>
+      <div class="mut"><b>Обща печалба (над Base):</b> ${q2(profitTotal)} ${ccy}</div>
+      <div class="mut"><b>Печалба за фирмата:</b> ${q2(firmProfit)} ${ccy} ${warnIcon(isWarn)} ${isWarn ? '<span class="warn">Консултантите надвишават печалбата за фирмата.</span>' : ''}</div>
+      <div class="mut"><b>Марж:</b> ${q2((profitTotal / sellEx) * 100)}%</div>
+      <div class="hr"></div>
+      <div class="mut"><b>Еквивалент (без ДДС):</b> ${q2(fromBGN(sellBGN,'BGN'))} BGN / ${q2(fromBGN(sellBGN,'EUR'))} EUR</div>
+      <div class="mut"><b>Еквивалент (с ДДС):</b> ${q2(fromBGN(sellIncBGN,'BGN'))} BGN / ${q2(fromBGN(sellIncBGN,'EUR'))} EUR</div>
+    `;
+  };
+
+  const calcCheckMargin = () => {
+    const costToMe = parseNum(mCost2.value);
+    const ccy  = mCcy2.value;
+    const consultants = Number.isFinite(parseNum(mConsult2.value)) ? parseNum(mConsult2.value) : 0;
+    const sellInput = parseNum(mSell2.value);
+    const sellMode = mSellMode2.value; // ex or inc
+    const targ = parseNum(mTarget2.value);
+
+    if (!Number.isFinite(costToMe) || !Number.isFinite(sellInput)) {
+      mOut.innerHTML = `<div class="bad">❌ Невалиден разход или цена към клиента.</div>`;
+      return;
+    }
+    if (sellInput <= 0) {
+      mOut.innerHTML = `<div class="bad">❌ Цената трябва да е > 0.</div>`;
+      return;
+    }
+
+    const sellEx = (sellMode === 'inc') ? (sellInput / (1 + VAT)) : sellInput;
+    const sellInc = sellEx * (1 + VAT);
+
+    const baseCost = costToMe + consultants;
+    const profitTotal = sellEx - baseCost;
+    const margin = (profitTotal / sellEx) * 100;
+
+    const firmProfit  = sellEx - costToMe - consultants;
+    const isWarn = consultants > firmProfit;
+
+    const okVsTarget = Number.isFinite(targ)
+      ? (margin >= targ ? `<span class="ok">✅ над/равно на целта</span>` : `<span class="bad">❌ под целта</span>`)
+      : '';
+
+    mOut.innerHTML = `
+      <div class="big">${profitTotal >= 0 ? '✅' : '❌'} Реален марж (без ДДС): <b>${q2(margin)}%</b> ${okVsTarget ? '• ' + okVsTarget : ''}</div>
+      <div class="mut"><b>Цена без ДДС:</b> ${q2(sellEx)} ${ccy} • <b>Цена с ДДС:</b> ${q2(sellInc)} ${ccy}</div>
+      <div class="hr"></div>
+      <div class="mut"><b>Cost to me:</b> ${q2(costToMe)} ${ccy}</div>
+      <div class="mut"><b>Консултанти:</b> ${q2(consultants)} ${ccy}</div>
+      <div class="mut"><b>Base (Cost+Consultants):</b> ${q2(baseCost)} ${ccy}</div>
+      <div class="hr"></div>
+      <div class="mut"><b>Обща печалба (над Base):</b> ${q2(profitTotal)} ${ccy}</div>
+      <div class="mut"><b>Печалба за фирмата:</b> ${q2(firmProfit)} ${ccy} ${warnIcon(isWarn)} ${isWarn ? '<span class="warn">Консултантите надвишават печалбата за фирмата.</span>' : ''}</div>
+    `;
+  };
+
+  document.getElementById('mModeTarget').onclick = () => setMode('target');
+  document.getElementById('mModeCheck').onclick  = () => setMode('check');
+  document.getElementById('mCalcTarget').onclick = calcTargetMargin;
+  document.getElementById('mCalcCheck').onclick  = calcCheckMargin;
+
+  document.getElementById('mExampleTarget').onclick = () => {
+    mCost.value = "7500";
+    mCostCcy.value = "BGN";
+    mConsult.value = "2500";
+    mTarget.value = "20";
+    calcTargetMargin();
+  };
+
+  document.getElementById('mExampleCheck').onclick = () => {
+    mCost2.value = "7500";
+    mCcy2.value = "BGN";
+    mConsult2.value = "2500";
+    mSell2.value = "12500";
+    mSellMode2.value = "ex";
+    mTarget2.value = "20";
+    calcCheckMargin();
+  };
+
+  document.getElementById('mClear').onclick = () => {
+    amt.value = ""; price.value = ""; paid.value = "";
+    mCost.value = ""; mConsult.value = ""; mTarget.value = "";
+    mCost2.value = ""; mConsult2.value = ""; mSell2.value = ""; mTarget2.value = "";
+    convOut.innerHTML = `<div class="mut">Въведи сума и натисни Convert.</div>`;
+    changeOut.innerHTML = `<div class="mut">Попълни цена и платено и натисни Calculate change.</div>`;
+    mOut.innerHTML = `<div class="mut">Избери Target или Check.</div>`;
+  };
+
+  // sensible defaults
+  fromCcy.value = "BGN";
+  toCcy.value = "EUR";
+  priceCcy.value = "BGN";
+  paidCcy.value = "EUR";
+  autoReturn();
+
+  mCostCcy.value = "BGN";
+  mCcy2.value = "BGN";
+  setMode('target');
+</script>
+</body>
+</html>
