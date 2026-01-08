@@ -3,491 +3,1113 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>BGN ⇄ EUR • Ресто • Марж (консултанти) • ДДС</title>
+  <title>FX Калкулатор</title>
+
   <style>
-    :root { --bg:#0b1020; --card:#121a33; --txt:#e9eefc; --mut:#a8b3d6; --acc:#7aa2ff; --ok:#3ddc97; --bad:#ff6b6b; --warn:#ffcc66; }
-    body { margin:0; font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial; background: radial-gradient(1200px 600px at 20% 0%, #16224a, var(--bg)); color:var(--txt); }
-    .wrap { max-width: 980px; margin: 0 auto; padding: 18px; }
-    h1 { font-size: 20px; margin: 6px 0 12px; }
-    .rate { color: var(--mut); font-size: 13px; margin-bottom: 14px; }
-    .grid { display:grid; gap:14px; grid-template-columns: 1fr; }
-    @media (min-width: 980px){ .grid { grid-template-columns: 1fr 1fr; } }
-    .card { background: rgba(18,26,51,.92); border: 1px solid rgba(122,162,255,.18); border-radius: 14px; padding: 14px; box-shadow: 0 10px 25px rgba(0,0,0,.22); }
-    .card h2 { margin: 0 0 10px; font-size: 16px; }
-    label { display:block; font-size: 12px; color: var(--mut); margin: 10px 0 6px; }
-    input, select { width:100%; padding: 10px 12px; border-radius: 10px; border:1px solid rgba(255,255,255,.12); background: rgba(8,12,25,.7); color: var(--txt); outline:none; }
-    input:focus, select:focus { border-color: rgba(122,162,255,.6); }
-    .row { display:grid; grid-template-columns: 1fr 120px; gap:10px; }
-    .btns { display:flex; gap:10px; flex-wrap:wrap; margin-top: 12px; }
-    button { padding: 10px 12px; border-radius: 12px; border:1px solid rgba(122,162,255,.35); background: rgba(122,162,255,.15); color: var(--txt); cursor:pointer; font-weight:600; }
-    button:hover { background: rgba(122,162,255,.22); }
-    .ghost { background: transparent; }
-    .out { margin-top: 12px; padding: 12px; border-radius: 12px; background: rgba(8,12,25,.55); border:1px solid rgba(255,255,255,.10); }
-    .big { font-size: 18px; font-weight: 800; }
-    .mut { color: var(--mut); font-size: 13px; margin-top: 6px; line-height: 1.35; }
-    .ok { color: var(--ok); }
-    .bad { color: var(--bad); }
-    .warn { color: var(--warn); }
-    .footer { margin-top: 14px; color: var(--mut); font-size: 12px; }
-    .pill { display:inline-block; padding:4px 8px; border-radius: 999px; border:1px solid rgba(255,255,255,.12); background: rgba(255,255,255,.06); }
-    .hidden { display:none; }
-    .hr { height:1px; background: rgba(255,255,255,.10); margin: 10px 0; }
+    :root{
+      --bg:#0b0f18;
+      --panel:#0f1626;
+      --panel2:#111b30;
+      --text:#eaf0ff;
+      --muted:#a9b6d8;
+      --line:#223154;
+      --accent:#7aa2ff;
+      --good:#35d07f;
+      --warn:#ffcc66;
+      --bad:#ff6b6b;
+      --btn:#172244;
+      --btn2:#1b2a54;
+      --shadow: 0 10px 30px rgba(0,0,0,.35);
+      --radius: 18px;
+    }
+    *{box-sizing:border-box}
+    body{
+      margin:0;
+      font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji","Segoe UI Emoji";
+      background: radial-gradient(1000px 600px at 20% -10%, rgba(122,162,255,.25), transparent 60%),
+                  radial-gradient(900px 600px at 100% 10%, rgba(53,208,127,.12), transparent 55%),
+                  var(--bg);
+      color:var(--text);
+      padding:22px 14px 60px;
+    }
+    .wrap{max-width:980px;margin:0 auto}
+    .header{
+      display:flex;gap:12px;align-items:center;justify-content:space-between;
+      margin-bottom:14px;
+    }
+    .title{
+      display:flex;flex-direction:column;gap:4px;
+    }
+    .title h1{
+      margin:0;
+      font-size:22px;
+      letter-spacing:.2px;
+    }
+    .title .sub{
+      color:var(--muted);
+      font-size:13px;
+    }
+    .tabs{
+      display:flex;gap:8px;flex-wrap:wrap;
+      justify-content:flex-end;
+    }
+    .tab{
+      border:1px solid var(--line);
+      background: linear-gradient(180deg, rgba(255,255,255,.06), rgba(255,255,255,.02));
+      color:var(--text);
+      padding:10px 12px;
+      border-radius: 999px;
+      cursor:pointer;
+      user-select:none;
+      font-size:13px;
+      transition: transform .06s ease, border-color .2s ease, background .2s ease;
+    }
+    .tab:hover{transform:translateY(-1px); border-color: rgba(122,162,255,.45)}
+    .tab.active{
+      background: linear-gradient(180deg, rgba(122,162,255,.22), rgba(122,162,255,.08));
+      border-color: rgba(122,162,255,.65);
+    }
+
+    .grid{
+      display:grid;
+      grid-template-columns: 1.15fr .85fr;
+      gap:14px;
+      align-items:start;
+    }
+    @media (max-width: 940px){
+      .grid{grid-template-columns:1fr}
+      .tabs{justify-content:flex-start}
+    }
+
+    .card{
+      background: linear-gradient(180deg, rgba(255,255,255,.04), rgba(255,255,255,.02));
+      border:1px solid var(--line);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      overflow:hidden;
+    }
+    .card .head{
+      padding:14px 16px;
+      border-bottom:1px solid rgba(34,49,84,.7);
+      background: linear-gradient(180deg, rgba(255,255,255,.03), rgba(255,255,255,.01));
+      display:flex;gap:10px;align-items:center;justify-content:space-between;
+    }
+    .card .head .h{
+      font-weight:650;
+      font-size:14px;
+      letter-spacing:.2px;
+      display:flex;gap:10px;align-items:center;
+    }
+    .badge{
+      font-size:12px;
+      color:var(--muted);
+      border:1px solid rgba(34,49,84,.85);
+      padding:6px 10px;
+      border-radius:999px;
+      background: rgba(17,27,48,.55);
+    }
+    .body{padding:14px 16px}
+
+    .row{display:grid;grid-template-columns: 1fr 1fr; gap:12px}
+    @media (max-width: 640px){ .row{grid-template-columns:1fr} }
+
+    label{display:flex;flex-direction:column; gap:8px; font-size:12px; color:var(--muted)}
+    input, textarea, select{
+      width:100%;
+      background: rgba(15,22,38,.8);
+      border:1px solid rgba(34,49,84,.9);
+      border-radius: 14px;
+      padding:11px 12px;
+      color:var(--text);
+      outline:none;
+      font-size:14px;
+    }
+    input:focus, textarea:focus, select:focus{border-color: rgba(122,162,255,.75)}
+    textarea{min-height:80px; resize:vertical}
+
+    .mini{font-size:11px; color:var(--muted)}
+    .help{
+      color:var(--muted);
+      font-size:12px;
+      line-height:1.35;
+    }
+
+    .controls{
+      display:flex;flex-wrap:wrap;gap:8px; align-items:center;
+      margin-top:10px;
+    }
+    .btn{
+      background: linear-gradient(180deg, rgba(255,255,255,.06), rgba(255,255,255,.02));
+      border:1px solid rgba(34,49,84,.95);
+      color:var(--text);
+      padding:9px 12px;
+      border-radius: 12px;
+      cursor:pointer;
+      user-select:none;
+      font-size:13px;
+      transition: transform .06s ease, border-color .2s ease;
+    }
+    .btn:hover{transform:translateY(-1px); border-color: rgba(122,162,255,.55)}
+    .btn.primary{
+      background: linear-gradient(180deg, rgba(122,162,255,.22), rgba(122,162,255,.08));
+      border-color: rgba(122,162,255,.65);
+    }
+    .btn.ghost{
+      background: rgba(15,22,38,.55);
+    }
+
+    .quick{
+      display:flex;flex-wrap:wrap; gap:8px;
+      margin-top:10px;
+    }
+    .qbtn{
+      padding:8px 10px;
+      border-radius: 999px;
+      background: rgba(23,34,68,.65);
+      border:1px solid rgba(34,49,84,.95);
+      color:var(--text);
+      font-size:12px;
+      cursor:pointer;
+      user-select:none;
+      transition: transform .06s ease, border-color .2s ease;
+    }
+    .qbtn:hover{transform:translateY(-1px); border-color: rgba(122,162,255,.55)}
+    .qbtn.active{
+      background: rgba(122,162,255,.18);
+      border-color: rgba(122,162,255,.65);
+    }
+
+    .split{
+      display:flex; gap:10px; flex-wrap:wrap; align-items:center;
+      margin-top:10px;
+    }
+    .toggle{
+      display:flex; gap:6px; align-items:center;
+      background: rgba(17,27,48,.65);
+      border:1px solid rgba(34,49,84,.9);
+      border-radius: 999px;
+      padding:6px;
+    }
+    .tbtn{
+      padding:8px 10px;
+      border-radius: 999px;
+      font-size:12px;
+      cursor:pointer;
+      user-select:none;
+      color:var(--muted);
+    }
+    .tbtn.active{
+      background: rgba(122,162,255,.18);
+      color: var(--text);
+      border: 1px solid rgba(122,162,255,.55);
+    }
+
+    .results{
+      display:grid;
+      grid-template-columns: 1fr 1fr;
+      gap:12px;
+      margin-top:12px;
+    }
+    @media (max-width: 780px){ .results{grid-template-columns:1fr} }
+
+    .kpi{
+      background: rgba(17,27,48,.55);
+      border:1px solid rgba(34,49,84,.85);
+      border-radius: 16px;
+      padding:12px 12px;
+    }
+    .kpi .k{
+      display:flex; align-items:baseline; justify-content:space-between;
+      gap:10px;
+    }
+    .kpi .name{
+      color:var(--muted);
+      font-size:12px;
+    }
+    .kpi .val{
+      font-size:18px;
+      font-weight:700;
+      letter-spacing:.2px;
+    }
+    .kpi .sub{
+      color:var(--muted);
+      font-size:12px;
+      margin-top:6px;
+      display:flex; gap:8px; align-items:center; flex-wrap:wrap;
+    }
+    .pill{
+      padding:4px 8px;
+      border-radius: 999px;
+      border:1px solid rgba(34,49,84,.85);
+      background: rgba(15,22,38,.55);
+      font-size:11px;
+      color:var(--muted);
+    }
+    .pill.good{border-color: rgba(53,208,127,.55); color: rgba(53,208,127,.95)}
+    .pill.warn{border-color: rgba(255,204,102,.55); color: rgba(255,204,102,.95)}
+    .pill.bad{border-color: rgba(255,107,107,.55); color: rgba(255,107,107,.95)}
+
+    .warnbox{
+      margin-top:12px;
+      padding:12px 12px;
+      border-radius: 16px;
+      border: 1px dashed rgba(255,204,102,.7);
+      background: rgba(255,204,102,.08);
+      color: rgba(255,204,102,.95);
+      display:none;
+    }
+
+    .chartwrap{
+      display:grid;
+      grid-template-columns: 220px 1fr;
+      gap:14px;
+      align-items:center;
+      margin-top:12px;
+    }
+    @media (max-width: 640px){ .chartwrap{grid-template-columns:1fr} }
+    canvas{width:220px;height:220px}
+    .legend{display:flex; flex-direction:column; gap:8px}
+    .legrow{display:flex; gap:10px; align-items:center; justify-content:space-between}
+    .dot{width:10px;height:10px;border-radius:999px}
+    .legname{color:var(--muted); font-size:12px}
+    .legval{font-weight:650; font-size:12px}
+
+    .toast{
+      position:fixed;
+      left:50%;
+      bottom:18px;
+      transform:translateX(-50%);
+      background: rgba(17,27,48,.92);
+      border:1px solid rgba(34,49,84,.9);
+      color: var(--text);
+      padding:10px 12px;
+      border-radius: 999px;
+      box-shadow: var(--shadow);
+      font-size:13px;
+      display:none;
+      z-index:99;
+    }
+
+    .section{display:none}
+    .section.active{display:block}
+
+    .smallnote{font-size:11px;color:var(--muted);margin-top:8px}
+    .hr{height:1px;background:rgba(34,49,84,.55); margin:14px 0}
   </style>
 </head>
+
 <body>
   <div class="wrap">
-    <h1>💱 BGN ⇄ EUR • 🪙 Ресто • 📈 Марж (консултанти) • 🧾 ДДС</h1>
-    <div class="rate">
-      Курс: <span class="pill">1 EUR = 1.95583 BGN</span>
-      • ДДС: <span class="pill">20%</span>
-      • Закръгляне: 2 знака
+    <div class="header">
+      <div class="title">
+        <h1>FX Калкулатор</h1>
+        <div class="sub">BGN↔EUR • Ресто • Марж (Консултанти) • без/с ДДС • 2 знака</div>
+      </div>
+      <div class="tabs">
+        <div class="tab active" data-tab="margin">📈 Марж</div>
+        <div class="tab" data-tab="fx">💱 Конвертор</div>
+        <div class="tab" data-tab="change">🪙 Ресто</div>
+      </div>
     </div>
 
-    <div class="grid">
+    <!-- ===================== MARЖ ===================== -->
+    <section id="tab-margin" class="section active">
+      <div class="grid">
+        <div class="card">
+          <div class="head">
+            <div class="h">📈 Марж + Консултанти</div>
+            <div class="badge">Класически марж: печалба / приход</div>
+          </div>
+          <div class="body">
 
-      <div class="card">
-        <h2>Конвертор</h2>
+            <div class="row">
+              <label>
+                Разход до нас (лв.)
+                <input id="m_cost" inputmode="decimal" placeholder="напр. 7500" />
+              </label>
+              <label>
+                Консултанти (FOC) (лв.)
+                <input id="m_cons" inputmode="decimal" placeholder="напр. 2500" />
+              </label>
+            </div>
 
-        <label>Сума</label>
-        <div class="row">
-          <input id="amt" inputmode="decimal" placeholder="напр. 12.50" />
-          <select id="fromCcy">
-            <option value="BGN">BGN</option>
-            <option value="EUR">EUR</option>
-          </select>
+            <div class="row" style="margin-top:12px;">
+              <label>
+                ДДС (%)
+                <input id="m_vat" inputmode="decimal" placeholder="20" value="20" />
+              </label>
+              <label>
+                База (Разход + Консултанти) (лв.)
+                <input id="m_base" disabled />
+              </label>
+            </div>
+
+            <div class="hr"></div>
+
+            <div class="row">
+              <label>
+                Целеви марж (%) (0–1000)
+                <input id="m_margin" inputmode="decimal" placeholder="напр. 20.00" />
+                <div class="mini">Може да пишеш ръчно, да ползваш плъзгач или бързи бутони.</div>
+              </label>
+
+              <label>
+                Плъзгач (марж %)
+                <input id="m_slider" type="range" min="0" max="1000" step="0.01" value="20" />
+                <div class="mini">Точност: 0.01%</div>
+              </label>
+            </div>
+
+            <div class="quick" id="m_quick">
+              <!-- 5..50 през 5 -->
+            </div>
+
+            <div class="split">
+              <div class="toggle" title="Избери как управляваш изчислението">
+                <div class="tbtn active" id="mode_target_margin">Цел: Марж %</div>
+                <div class="tbtn" id="mode_target_profit">Цел: Печалба (лв.)</div>
+              </div>
+
+              <label style="flex:1; min-width:240px; margin:0;">
+                Целева печалба за фирмата (лв.)
+                <input id="m_target_profit" inputmode="decimal" placeholder="напр. 2500" />
+                <div class="mini">Активно само при „Цел: Печалба (лв.)“.</div>
+              </label>
+            </div>
+
+            <div class="hr"></div>
+
+            <div class="row">
+              <label>
+                Цена към клиента (без ДДС) (лв.)
+                <input id="m_price_ex" inputmode="decimal" placeholder="напр. 12500" />
+                <div class="mini">Ако въведеш цена → автоматично изчислява марж и печалба.</div>
+              </label>
+
+              <label>
+                Цена към клиента (с ДДС) (лв.)
+                <input id="m_price_inc" inputmode="decimal" placeholder="напр. 15000" />
+                <div class="mini">Може да въвеждаш и тук → изчислява без ДДС + марж.</div>
+              </label>
+            </div>
+
+            <div class="controls">
+              <div class="btn ghost" id="btn_recalc">🔄 Пресметни</div>
+              <div class="btn primary" id="btn_copy">📋 Copy summary</div>
+            </div>
+
+            <label style="margin-top:12px;">
+              Забележки (по избор)
+              <textarea id="m_notes" placeholder="напр. доставка до 5 работни дни, гаранция 24 месеца..."></textarea>
+            </label>
+
+            <div class="warnbox" id="m_warn"></div>
+
+            <div class="chartwrap">
+              <div style="display:flex; justify-content:center;">
+                <canvas id="m_chart" width="220" height="220"></canvas>
+              </div>
+              <div class="legend" id="m_legend"></div>
+            </div>
+
+          </div>
         </div>
 
-        <label>Към</label>
-        <select id="toCcy">
-          <option value="EUR">EUR</option>
-          <option value="BGN">BGN</option>
-        </select>
+        <div class="card">
+          <div class="head">
+            <div class="h">📌 Резултати</div>
+            <div class="badge">2 знака</div>
+          </div>
+          <div class="body">
 
-        <div class="btns">
-          <button id="btnConvert">Convert</button>
-          <button class="ghost" id="btnSwap">Swap</button>
-          <button class="ghost" id="btnFill1">10 BGN</button>
-          <button class="ghost" id="btnFill2">10 EUR</button>
-        </div>
+            <div class="results">
+              <div class="kpi">
+                <div class="k">
+                  <div class="name">Приход от клиент (без ДДС)</div>
+                  <div class="val" id="r_revenue_ex">0.00 лв.</div>
+                </div>
+                <div class="sub">
+                  <span class="pill" id="r_vatpill">ДДС: 0.00 лв.</span>
+                </div>
+              </div>
 
-        <div class="out" id="convOut">
-          <div class="mut">Въведи сума и натисни Convert.</div>
+              <div class="kpi">
+                <div class="k">
+                  <div class="name">Печалба за фирмата (без ДДС)</div>
+                  <div class="val" id="r_profit">0.00 лв.</div>
+                </div>
+                <div class="sub">
+                  <span class="pill good" id="r_marginpill">Марж: 0.00%</span>
+                </div>
+              </div>
+
+              <div class="kpi">
+                <div class="k">
+                  <div class="name">Консултанти (FOC)</div>
+                  <div class="val" id="r_cons">0.00 лв.</div>
+                </div>
+                <div class="sub">
+                  <span class="pill" id="r_basepill">База: 0.00 лв.</span>
+                </div>
+              </div>
+
+              <div class="kpi">
+                <div class="k">
+                  <div class="name">Общо към клиент <span class="mini">без ДДС</span></div>
+                  <div class="val" id="r_total_ex">0.00 лв.</div>
+                </div>
+                <div class="sub">
+                  <span class="pill">Общо <span class="mini">с ДДС</span>: <span id="r_total_inc">0.00 лв.</span></span>
+                </div>
+              </div>
+            </div>
+
+            <div class="smallnote">
+              * „Марж“ = Печалба / Приход (без ДДС). „База“ = Разход до нас + Консултанти.
+            </div>
+
+          </div>
         </div>
       </div>
+    </section>
 
-      <div class="card">
-        <h2>Ресто (плащаш в една валута, връщаш в друга)</h2>
+    <!-- ===================== FX ===================== -->
+    <section id="tab-fx" class="section">
+      <div class="grid">
+        <div class="card">
+          <div class="head">
+            <div class="h">💱 Конвертор BGN ↔ EUR</div>
+            <div class="badge">Фиксиран курс</div>
+          </div>
+          <div class="body">
+            <div class="row">
+              <label>
+                Сума (лв.)
+                <input id="fx_bgn" inputmode="decimal" placeholder="напр. 100.00" />
+              </label>
+              <label>
+                Сума (€)
+                <input id="fx_eur" inputmode="decimal" placeholder="напр. 51.13" />
+              </label>
+            </div>
 
-        <label>Цена</label>
-        <div class="row">
-          <input id="price" inputmode="decimal" placeholder="напр. 18.50" />
-          <select id="priceCcy">
-            <option value="BGN">BGN</option>
-            <option value="EUR">EUR</option>
-          </select>
+            <div class="row" style="margin-top:12px;">
+              <label>
+                Курс (лв. за 1 €)
+                <input id="fx_rate" inputmode="decimal" value="1.95583" />
+              </label>
+              <div class="help">
+                В България курсът е фиксиран: 1 € = 1.95583 лв.  
+                Можеш да го променяш временно, ако искаш вътрешен курс.
+              </div>
+            </div>
+
+            <div class="controls">
+              <div class="btn ghost" id="fx_clear">🧹 Изчисти</div>
+            </div>
+          </div>
         </div>
 
-        <label>Платено</label>
-        <div class="row">
-          <input id="paid" inputmode="decimal" placeholder="напр. 20" />
-          <select id="paidCcy">
-            <option value="EUR">EUR</option>
-            <option value="BGN">BGN</option>
-          </select>
-        </div>
-
-        <label>Връщам в</label>
-        <select id="returnCcy">
-          <option value="BGN">BGN</option>
-          <option value="EUR">EUR</option>
-        </select>
-
-        <div class="btns">
-          <button id="btnChange">Calculate change</button>
-          <button class="ghost" id="btnAutoReturn">Auto (другата)</button>
-          <button class="ghost" id="btnExample">Пример</button>
-        </div>
-
-        <div class="out" id="changeOut">
-          <div class="mut">Попълни цена и платено и натисни Calculate change.</div>
+        <div class="card">
+          <div class="head">
+            <div class="h">ℹ️ Подсказка</div>
+            <div class="badge">2 знака</div>
+          </div>
+          <div class="body">
+            <div class="help">
+              Пиши в едното поле → другото се смята автоматично.  
+              Закръгляме винаги до 2 знака.
+            </div>
+          </div>
         </div>
       </div>
+    </section>
 
-      <div class="card" id="margin">
-        <h2>📈 Марж (целеви / проверка) — Консултанти + ДДС</h2>
+    <!-- ===================== CHANGE ===================== -->
+    <section id="tab-change" class="section">
+      <div class="grid">
+        <div class="card">
+          <div class="head">
+            <div class="h">🪙 Ресто (плащаш в една валута, връщаш в друга)</div>
+            <div class="badge">ясни тотали</div>
+          </div>
+          <div class="body">
 
-        <div class="btns">
-          <button id="mModeTarget">Target</button>
-          <button class="ghost" id="mModeCheck">Check</button>
-          <button class="ghost" id="mClear">Clear</button>
+            <div class="row">
+              <label>
+                Цена (лв.)
+                <input id="c_price_bgn" inputmode="decimal" placeholder="напр. 19.99" />
+              </label>
+              <label>
+                Цена (€)
+                <input id="c_price_eur" inputmode="decimal" placeholder="напр. 10.22" />
+              </label>
+            </div>
+
+            <div class="row" style="margin-top:12px;">
+              <label>
+                Платено (лв.)
+                <input id="c_paid_bgn" inputmode="decimal" placeholder="напр. 20.00" />
+              </label>
+              <label>
+                Платено (€)
+                <input id="c_paid_eur" inputmode="decimal" placeholder="напр. 20.00" />
+              </label>
+            </div>
+
+            <div class="row" style="margin-top:12px;">
+              <label>
+                Курс (лв. за 1 €)
+                <input id="c_rate" inputmode="decimal" value="1.95583" />
+              </label>
+              <label>
+                Връщаме ресто в
+                <select id="c_return_currency">
+                  <option value="BGN">Лева (BGN)</option>
+                  <option value="EUR">Евро (EUR)</option>
+                </select>
+              </label>
+            </div>
+
+            <div class="controls">
+              <div class="btn ghost" id="c_clear">🧹 Изчисти</div>
+            </div>
+
+            <div class="hr"></div>
+
+            <div class="results" style="margin-top:0;">
+              <div class="kpi">
+                <div class="k">
+                  <div class="name">Общо (лв.)</div>
+                  <div class="val" id="c_total_bgn">0.00 лв.</div>
+                </div>
+                <div class="sub">
+                  <span class="pill">Общо (€): <span id="c_total_eur">0.00 €</span></span>
+                </div>
+              </div>
+
+              <div class="kpi">
+                <div class="k">
+                  <div class="name">Ресто (в избраната валута)</div>
+                  <div class="val" id="c_change_main">0.00</div>
+                </div>
+                <div class="sub">
+                  <span class="pill">Ресто (лв.): <span id="c_change_bgn">0.00 лв.</span></span>
+                  <span class="pill">Ресто (€): <span id="c_change_eur">0.00 €</span></span>
+                </div>
+              </div>
+            </div>
+
+            <div class="warnbox" id="c_warn"></div>
+
+          </div>
         </div>
 
-        <div id="mTargetBox">
-          <label>Разход към мен (Cost to me)</label>
-          <div class="row">
-            <input id="mCost" inputmode="decimal" placeholder="напр. 7500" />
-            <select id="mCostCcy">
-              <option value="BGN">BGN</option>
-              <option value="EUR">EUR</option>
-            </select>
+        <div class="card">
+          <div class="head">
+            <div class="h">ℹ️ Как работи</div>
+            <div class="badge">ясно</div>
           </div>
-
-          <label>Консултанти / трети лица (Consultants)</label>
-          <input id="mConsult" inputmode="decimal" placeholder="напр. 2500 (ако няма — остави празно)" />
-
-          <label>Целеви марж % (Margin, без ДДС)</label>
-          <input id="mTarget" inputmode="decimal" placeholder="напр. 20" />
-
-          <div class="btns">
-            <button id="mCalcTarget">Calculate selling price</button>
-            <button class="ghost" id="mExampleTarget">Пример</button>
+          <div class="body">
+            <div class="help">
+              Можеш да зададеш цена в лв. или € (или и двете).  
+              За плащането също. Калкулаторът превръща по курса и показва:
+              <b>Общо в лв/€</b> и <b>ресто в лв/€</b>, плюс “в избраната валута”.
+            </div>
           </div>
-
-          <div class="mut">
-            Марж (без ДДС): <span class="pill">S = B / (1 − m)</span>, B = (Cost to me + Consultants)
-          </div>
-        </div>
-
-        <div id="mCheckBox" class="hidden">
-          <label>Разход към мен (Cost to me)</label>
-          <div class="row">
-            <input id="mCost2" inputmode="decimal" placeholder="напр. 7500" />
-            <select id="mCcy2">
-              <option value="BGN">BGN</option>
-              <option value="EUR">EUR</option>
-            </select>
-          </div>
-
-          <label>Консултанти / трети лица (Consultants)</label>
-          <input id="mConsult2" inputmode="decimal" placeholder="напр. 2500" />
-
-          <label>Цена към клиента</label>
-          <input id="mSell2" inputmode="decimal" placeholder="напр. 12500" />
-
-          <label>Цената е…</label>
-          <select id="mSellMode2">
-            <option value="ex">без ДДС</option>
-            <option value="inc">с ДДС</option>
-          </select>
-
-          <label>Целеви марж % (по желание за сравнение)</label>
-          <input id="mTarget2" inputmode="decimal" placeholder="напр. 20" />
-
-          <div class="btns">
-            <button id="mCalcCheck">Calculate margin</button>
-            <button class="ghost" id="mExampleCheck">Пример</button>
-          </div>
-
-          <div class="mut">
-            Марж = (S − B) / S, където S е без ДДС.
-          </div>
-        </div>
-
-        <div class="out" id="mOut">
-          <div class="mut">Избери Target или Check.</div>
         </div>
       </div>
+    </section>
 
-    </div>
+    <div class="toast" id="toast">Копирано ✅</div>
 
-    <div class="footer">
-      Работи локално в браузъра (няма бекенд). Препоръчително: достъп само през VPN/LAN.
-    </div>
   </div>
 
 <script>
-  const RATE = 1.95583;
-  const VAT = 0.20;
+  // ---------- helpers ----------
+  const $ = (id) => document.getElementById(id);
 
-  const q2 = (n) => Math.round((n + Number.EPSILON) * 100) / 100;
+  function toNum(v){
+    if (v === null || v === undefined) return 0;
+    const s = String(v).replace(",", ".").replace(/[^\d.-]/g, "");
+    const n = parseFloat(s);
+    return Number.isFinite(n) ? n : 0;
+  }
+  function fmt2(n){
+    const x = Number.isFinite(n) ? n : 0;
+    return x.toLocaleString("bg-BG", {minimumFractionDigits:2, maximumFractionDigits:2});
+  }
+  function clamp(n, a, b){ return Math.max(a, Math.min(b, n)); }
 
-  const parseNum = (v) => {
-    if (v === null || v === undefined) return NaN;
-    const s = String(v).trim();
-    if (!s) return NaN;
-    return Number(s.replace(/\s+/g,'').replace(',', '.'));
+  function showToast(msg){
+    const t = $("toast");
+    t.textContent = msg || "Копирано ✅";
+    t.style.display = "block";
+    clearTimeout(showToast._t);
+    showToast._t = setTimeout(()=> t.style.display="none", 1600);
+  }
+
+  // ---------- tabs ----------
+  const tabs = document.querySelectorAll(".tab");
+  const sections = {
+    margin: $("tab-margin"),
+    fx: $("tab-fx"),
+    change: $("tab-change")
+  };
+  function activateTab(name){
+    tabs.forEach(t => t.classList.toggle("active", t.dataset.tab === name));
+    Object.entries(sections).forEach(([k, el]) => el.classList.toggle("active", k === name));
+    // anchor support
+    if (name === "margin") location.hash = "#margin";
+    if (name === "fx") location.hash = "#fx";
+    if (name === "change") location.hash = "#resto";
+  }
+  tabs.forEach(t => t.addEventListener("click", ()=> activateTab(t.dataset.tab)));
+
+  // ---------- Margin module ----------
+  const m = {
+    cost: $("m_cost"),
+    cons: $("m_cons"),
+    vat: $("m_vat"),
+    base: $("m_base"),
+
+    margin: $("m_margin"),
+    slider: $("m_slider"),
+    quick: $("m_quick"),
+
+    modeMargin: $("mode_target_margin"),
+    modeProfit: $("mode_target_profit"),
+    targetProfit: $("m_target_profit"),
+
+    priceEx: $("m_price_ex"),
+    priceInc: $("m_price_inc"),
+    notes: $("m_notes"),
+
+    btnRecalc: $("btn_recalc"),
+    btnCopy: $("btn_copy"),
+
+    warn: $("m_warn"),
+
+    // results
+    rRevenueEx: $("r_revenue_ex"),
+    rVatPill: $("r_vatpill"),
+    rProfit: $("r_profit"),
+    rMarginPill: $("r_marginpill"),
+    rCons: $("r_cons"),
+    rBasePill: $("r_basepill"),
+    rTotalEx: $("r_total_ex"),
+    rTotalInc: $("r_total_inc"),
+
+    // chart
+    chart: $("m_chart"),
+    legend: $("m_legend"),
   };
 
-  const toBGN = (amt, ccy) => ccy === 'BGN' ? amt : (amt * RATE);
-  const fromBGN = (amtBGN, ccy) => ccy === 'BGN' ? amtBGN : (amtBGN / RATE);
+  // build quick buttons 5..50 step 5
+  (function(){
+    for(let p=5; p<=50; p+=5){
+      const b = document.createElement("div");
+      b.className = "qbtn";
+      b.textContent = p + "%";
+      b.dataset.p = String(p);
+      b.addEventListener("click", ()=>{
+        setMode("margin");
+        setMarginPct(p);
+        setActiveQuick(p);
+        recalcFrom("margin");
+      });
+      m.quick.appendChild(b);
+    }
+  })();
+  function setActiveQuick(p){
+    const btns = m.quick.querySelectorAll(".qbtn");
+    btns.forEach(x => x.classList.toggle("active", Number(x.dataset.p) === Number(p)));
+  }
 
-  const fmtBoth = (amt, ccy) => {
-    const bgn = toBGN(amt, ccy);
-    return `${q2(fromBGN(bgn,'BGN'))} BGN / ${q2(fromBGN(bgn,'EUR'))} EUR`;
-  };
+  let mode = "margin"; // "margin" or "profit"
+  let lastEdited = null;
+  function setMode(newMode){
+    mode = newMode;
+    m.modeMargin.classList.toggle("active", mode === "margin");
+    m.modeProfit.classList.toggle("active", mode === "profit");
+    m.targetProfit.disabled = (mode !== "profit");
+    // visual hint
+    if (mode !== "profit") m.targetProfit.value = m.targetProfit.value; // no-op
+  }
+  m.modeMargin.addEventListener("click", ()=> { setMode("margin"); recalcFrom("margin"); });
+  m.modeProfit.addEventListener("click", ()=> { setMode("profit"); recalcFrom("profit"); });
 
-  // ---------------- Converter ----------------
-  const amt = document.getElementById('amt');
-  const fromCcy = document.getElementById('fromCcy');
-  const toCcy = document.getElementById('toCcy');
-  const convOut = document.getElementById('convOut');
+  function setMarginPct(p){
+    const v = clamp(Number(p) || 0, 0, 1000);
+    m.margin.value = fmt2(v);
+    m.slider.value = String(v);
+  }
 
-  const renderConv = () => {
-    const a = parseNum(amt.value);
-    const f = fromCcy.value;
-    const t = toCcy.value;
+  function getVatRate(){
+    return clamp(toNum(m.vat.value), 0, 1000) / 100;
+  }
 
-    if (!Number.isFinite(a)) {
-      convOut.innerHTML = `<div class="bad">❌ Невалидна сума.</div>`;
+  function drawDonut({cost, consultants, profit}){
+    const ctx = m.chart.getContext("2d");
+    const W = m.chart.width, H = m.chart.height;
+    ctx.clearRect(0,0,W,H);
+
+    // handle negatives
+    const pcost = Math.max(0, cost);
+    const pcons = Math.max(0, consultants);
+    const pprof = Math.max(0, profit);
+    const total = pcost + pcons + pprof;
+
+    // colors
+    const slices = [
+      {name:"Разход до нас", val: pcost, color:"#7aa2ff"},
+      {name:"Консултанти", val: pcons, color:"#ffcc66"},
+      {name:"Печалба", val: pprof, color:"#35d07f"},
+    ];
+
+    // background ring
+    const cx=W/2, cy=H/2;
+    const r=92;
+    const ring=22;
+
+    ctx.beginPath();
+    ctx.arc(cx,cy,r,0,Math.PI*2);
+    ctx.strokeStyle="rgba(34,49,84,.55)";
+    ctx.lineWidth=ring;
+    ctx.stroke();
+
+    if(total <= 0){
+      // center text
+      ctx.fillStyle="rgba(234,240,255,.9)";
+      ctx.font="700 14px system-ui";
+      ctx.textAlign="center";
+      ctx.fillText("Няма данни", cx, cy+5);
+      renderLegend(slices, 0);
       return;
     }
 
-    const bgn = toBGN(a, f);
-    const out = fromBGN(bgn, t);
+    let a0 = -Math.PI/2;
+    slices.forEach(s=>{
+      const a = (s.val/total) * Math.PI*2;
+      if(a <= 0) return;
+      ctx.beginPath();
+      ctx.arc(cx,cy,r,a0,a0+a);
+      ctx.strokeStyle=s.color;
+      ctx.lineWidth=ring;
+      ctx.lineCap="round";
+      ctx.stroke();
+      a0 += a;
+    });
 
-    convOut.innerHTML = `
-      <div class="big">💱 ${q2(a)} ${f} = ${q2(out)} ${t}</div>
-      <div class="mut">Еквивалент: ${q2(fromBGN(bgn,'BGN'))} BGN / ${q2(fromBGN(bgn,'EUR'))} EUR</div>
-    `;
-  };
+    // center text
+    ctx.fillStyle="rgba(234,240,255,.95)";
+    ctx.font="800 20px system-ui";
+    ctx.textAlign="center";
+    ctx.fillText(fmt2(total), cx, cy-2);
+    ctx.fillStyle="rgba(169,182,216,.95)";
+    ctx.font="600 12px system-ui";
+    ctx.fillText("разбивка (лв.)", cx, cy+18);
 
-  document.getElementById('btnConvert').onclick = renderConv;
-  document.getElementById('btnSwap').onclick = () => {
-    const f = fromCcy.value;
-    fromCcy.value = toCcy.value;
-    toCcy.value = f;
-    renderConv();
-  };
-  document.getElementById('btnFill1').onclick = () => { amt.value = "10"; fromCcy.value = "BGN"; toCcy.value = "EUR"; renderConv(); };
-  document.getElementById('btnFill2').onclick = () => { amt.value = "10"; fromCcy.value = "EUR"; toCcy.value = "BGN"; renderConv(); };
-  amt.addEventListener('keydown', (e)=>{ if(e.key==='Enter') renderConv(); });
+    renderLegend(slices, total);
+  }
 
-  // ---------------- Change ----------------
-  const price = document.getElementById('price');
-  const priceCcy = document.getElementById('priceCcy');
-  const paid = document.getElementById('paid');
-  const paidCcy = document.getElementById('paidCcy');
-  const returnCcy = document.getElementById('returnCcy');
-  const changeOut = document.getElementById('changeOut');
-
-  const autoReturn = () => {
-    returnCcy.value = (paidCcy.value === 'BGN') ? 'EUR' : 'BGN';
-  };
-
-  const renderChange = () => {
-    const p = parseNum(price.value);
-    const pc = priceCcy.value;
-    const pay = parseNum(paid.value);
-    const payc = paidCcy.value;
-    const rc = returnCcy.value;
-
-    if (!Number.isFinite(p) || !Number.isFinite(pay)) {
-      changeOut.innerHTML = `<div class="bad">❌ Невалидна цена или платено.</div>`;
-      return;
-    }
-
-    const pBGN = toBGN(p, pc);
-    const payBGN = toBGN(pay, payc);
-    const diffBGN = payBGN - pBGN;
-
-    // Totals in both currencies
-    const priceBoth = `${q2(fromBGN(pBGN,'BGN'))} BGN / ${q2(fromBGN(pBGN,'EUR'))} EUR`;
-    const paidBoth  = `${q2(fromBGN(payBGN,'BGN'))} BGN / ${q2(fromBGN(payBGN,'EUR'))} EUR`;
-
-    if (diffBGN < 0) {
-      const missingBGN = -diffBGN;
-      changeOut.innerHTML = `
-        <div class="bad big">❌ Недостатъчно плащане</div>
-        <div class="mut"><b>Цена:</b> ${priceBoth}</div>
-        <div class="mut"><b>Платено:</b> ${paidBoth}</div>
-        <div class="hr"></div>
-        <div class="mut"><b>Липсват:</b> ${q2(missingBGN)} BGN / ${q2(fromBGN(missingBGN,'EUR'))} EUR</div>
+  function renderLegend(slices, total){
+    m.legend.innerHTML = "";
+    slices.forEach(s=>{
+      const pct = total>0 ? (s.val/total*100) : 0;
+      const row = document.createElement("div");
+      row.className="legrow";
+      row.innerHTML = `
+        <div style="display:flex; gap:10px; align-items:center;">
+          <div class="dot" style="background:${s.color}"></div>
+          <div class="legname">${s.name}</div>
+        </div>
+        <div class="legval">${fmt2(s.val)} лв. <span style="color:var(--muted); font-weight:600;">(${fmt2(pct)}%)</span></div>
       `;
-      return;
+      m.legend.appendChild(row);
+    });
+  }
+
+  function updateWarning(companyProfit, consultants){
+    const w = m.warn;
+    w.style.display = "none";
+    w.textContent = "";
+    if(consultants > companyProfit && companyProfit > 0){
+      w.style.display = "block";
+      w.innerHTML = `⚠️ Внимание: „Консултанти“ (${fmt2(consultants)} лв.) надвишават печалбата за фирмата (${fmt2(companyProfit)} лв.).`;
     }
+    if(companyProfit < 0){
+      w.style.display = "block";
+      w.innerHTML = `⚠️ Внимание: получава се отрицателна печалба за фирмата (${fmt2(companyProfit)} лв.). Провери цената/разходите.`;
+    }
+  }
 
-    const changeInReturn = fromBGN(diffBGN, rc);
-    const changeBoth = `${q2(fromBGN(diffBGN,'BGN'))} BGN / ${q2(fromBGN(diffBGN,'EUR'))} EUR`;
+  function recalcFrom(source){
+    const cost = toNum(m.cost.value);
+    const cons = toNum(m.cons.value);
+    const base = cost + cons;
+    m.base.value = fmt2(base);
 
-    changeOut.innerHTML = `
-      <div class="ok big">✅ Ресто: ${q2(changeInReturn)} ${rc}</div>
-      <div class="mut"><b>Цена:</b> ${priceBoth}</div>
-      <div class="mut"><b>Платено:</b> ${paidBoth}</div>
-      <div class="hr"></div>
-      <div class="mut"><b>Ресто (еквивалент):</b> ${changeBoth}</div>
-    `;
-  };
+    const vatR = getVatRate();
 
-  document.getElementById('btnAutoReturn').onclick = () => { autoReturn(); renderChange(); };
-  document.getElementById('btnChange').onclick = renderChange;
-  document.getElementById('btnExample').onclick = () => {
-    price.value = "18.50"; priceCcy.value = "BGN";
-    paid.value = "20"; paidCcy.value = "EUR";
-    autoReturn();
-    renderChange();
-  };
+    let priceEx = toNum(m.priceEx.value);
+    let priceInc = toNum(m.priceInc.value);
 
-  // ---------------- Margin (Target / Check) ----------------
-  const mTargetBox = document.getElementById('mTargetBox');
-  const mCheckBox  = document.getElementById('mCheckBox');
-  const mOut = document.getElementById('mOut');
-
-  const mCost = document.getElementById('mCost');
-  const mCostCcy = document.getElementById('mCostCcy');
-  const mConsult = document.getElementById('mConsult');
-  const mTarget = document.getElementById('mTarget');
-
-  const mCost2 = document.getElementById('mCost2');
-  const mCcy2  = document.getElementById('mCcy2');
-  const mConsult2 = document.getElementById('mConsult2');
-  const mSell2 = document.getElementById('mSell2');
-  const mSellMode2 = document.getElementById('mSellMode2');
-  const mTarget2 = document.getElementById('mTarget2');
-
-  const setMode = (mode) => {
-    const tBtn = document.getElementById('mModeTarget');
-    const cBtn = document.getElementById('mModeCheck');
-
-    if (mode === 'target') {
-      mTargetBox.classList.remove('hidden');
-      mCheckBox.classList.add('hidden');
-      tBtn.classList.remove('ghost');
-      cBtn.classList.add('ghost');
-      mOut.innerHTML = `<div class="mut">Въведи разход към мен, консултанти (по желание) и целеви марж %.</div>`;
+    // Determine main driver
+    // Priority: explicit price fields (if edited) > mode driver
+    if(source === "price_ex"){
+      priceEx = toNum(m.priceEx.value);
+      priceInc = priceEx * (1 + vatR);
+    } else if(source === "price_inc"){
+      priceInc = toNum(m.priceInc.value);
+      priceEx = (1 + vatR) > 0 ? (priceInc / (1 + vatR)) : 0;
+    } else if(source === "profit" && mode === "profit"){
+      const targetProfit = Math.max(0, toNum(m.targetProfit.value));
+      priceEx = base + targetProfit;
+      priceInc = priceEx * (1 + vatR);
     } else {
-      mTargetBox.classList.add('hidden');
-      mCheckBox.classList.remove('hidden');
-      tBtn.classList.add('ghost');
-      cBtn.classList.remove('ghost');
-      mOut.innerHTML = `<div class="mut">Въведи разход, консултанти и цена към клиента (с/без ДДС), за да видиш реалния марж.</div>`;
-    }
-  };
-
-  const warnIcon = (cond) => cond ? `<span class="warn">⚠️</span>` : "";
-
-  const calcTargetMargin = () => {
-    const costToMe = parseNum(mCost.value);
-    const ccy  = mCostCcy.value;
-    const consultants = Number.isFinite(parseNum(mConsult.value)) ? parseNum(mConsult.value) : 0;
-    const targ = parseNum(mTarget.value);
-
-    if (!Number.isFinite(costToMe) || !Number.isFinite(targ)) {
-      mOut.innerHTML = `<div class="bad">❌ Невалиден разход или марж.</div>`;
-      return;
+      // default driver: margin %
+      const marginPct = clamp(toNum(m.margin.value), 0, 1000);
+      // priceEx = base / (1 - margin)
+      // where margin = profit/revenue => profit = revenue*margin; base = revenue - profit = revenue*(1 - margin)
+      const margin = marginPct/100;
+      if(margin >= 0.999999){ // avoid div by near-zero
+        priceEx = 0;
+      } else {
+        priceEx = base / (1 - margin);
+      }
+      priceInc = priceEx * (1 + vatR);
     }
 
-    const m = targ / 100;
-    if (m <= 0 || m >= 0.99) {
-      mOut.innerHTML = `<div class="bad">❌ Маржът трябва да е между 0 и 99%.</div>`;
-      return;
+    // Compute profit & margin from priceEx
+    const profit = priceEx - base;
+    const marginPctImplied = priceEx > 0 ? (profit / priceEx * 100) : 0;
+    const vatAmount = priceEx * vatR;
+
+    // Update fields (keep 2 decimals)
+    m.priceEx.value = fmt2(priceEx);
+    m.priceInc.value = fmt2(priceInc);
+
+    // Update implied margin slider/field always from implied
+    // (even when price drives calculation)
+    m.slider.value = String(clamp(marginPctImplied, 0, 1000));
+    m.margin.value = fmt2(clamp(marginPctImplied, 0, 1000));
+
+    // results
+    m.rRevenueEx.textContent = fmt2(priceEx) + " лв.";
+    m.rVatPill.textContent = "ДДС: " + fmt2(vatAmount) + " лв.";
+    m.rProfit.textContent = fmt2(profit) + " лв.";
+    m.rMarginPill.textContent = "Марж: " + fmt2(marginPctImplied) + "%";
+    m.rCons.textContent = fmt2(cons) + " лв.";
+    m.rBasePill.textContent = "База: " + fmt2(base) + " лв.";
+    m.rTotalEx.textContent = fmt2(priceEx) + " лв.";
+    m.rTotalInc.textContent = fmt2(priceInc) + " лв.";
+
+    // warnings
+    updateWarning(profit, cons);
+
+    // chart
+    drawDonut({cost, consultants: cons, profit});
+
+    // quick buttons active state (only if exact match)
+    setActiveQuick(null);
+    const impliedRound = Math.round(marginPctImplied*100)/100;
+    m.quick.querySelectorAll(".qbtn").forEach(b=>{
+      const p = Number(b.dataset.p);
+      b.classList.toggle("active", Math.abs(impliedRound - p) < 0.001);
+    });
+  }
+
+  // Events
+  m.cost.addEventListener("input", ()=> recalcFrom(mode==="profit" ? "profit" : "margin"));
+  m.cons.addEventListener("input", ()=> recalcFrom(mode==="profit" ? "profit" : "margin"));
+  m.vat.addEventListener("input", ()=> recalcFrom("price_ex")); // keep price ex stable by default
+
+  m.margin.addEventListener("input", ()=>{
+    setMode("margin");
+    const v = clamp(toNum(m.margin.value), 0, 1000);
+    m.slider.value = String(v);
+    recalcFrom("margin");
+  });
+
+  m.slider.addEventListener("input", ()=>{
+    setMode("margin");
+    const v = clamp(toNum(m.slider.value), 0, 1000);
+    m.margin.value = fmt2(v);
+    recalcFrom("margin");
+  });
+
+  m.targetProfit.addEventListener("input", ()=>{
+    setMode("profit");
+    recalcFrom("profit");
+  });
+
+  m.priceEx.addEventListener("input", ()=>{
+    recalcFrom("price_ex");
+  });
+  m.priceInc.addEventListener("input", ()=>{
+    recalcFrom("price_inc");
+  });
+
+  m.btnRecalc.addEventListener("click", ()=> recalcFrom(mode==="profit" ? "profit" : "margin"));
+
+  m.btnCopy.addEventListener("click", async ()=>{
+    const cost = toNum(m.cost.value);
+    const cons = toNum(m.cons.value);
+    const base = cost + cons;
+    const vatR = getVatRate();
+    const priceEx = toNum(m.priceEx.value);
+    const priceInc = toNum(m.priceInc.value);
+    const profit = priceEx - base;
+    const marginPct = priceEx > 0 ? (profit/priceEx*100) : 0;
+    const vatAmount = priceEx * vatR;
+
+    const warn = (cons > profit && profit > 0) ? "⚠️ Внимание: Консултанти > Печалба за фирмата.\n" : "";
+    const notes = (m.notes.value || "").trim();
+
+    const text =
+`🧾 Оферта (калкулация)
+Цена без ДДС: ${fmt2(priceEx)} лв.
+ДДС (${fmt2(vatR*100)}%): ${fmt2(vatAmount)} лв.
+Цена с ДДС: ${fmt2(priceInc)} лв.
+
+Марж (класически): ${fmt2(marginPct)}%
+Печалба за фирмата: ${fmt2(profit)} лв.
+Консултанти (FOC): ${fmt2(cons)} лв.
+База (Разход + Консултанти): ${fmt2(base)} лв.
+
+${warn}${notes ? ("Забележки: " + notes) : ""}`.trim();
+
+    try{
+      await navigator.clipboard.writeText(text);
+      showToast("Копирано ✅");
+    }catch(e){
+      // fallback
+      const ta = document.createElement("textarea");
+      ta.value = text;
+      document.body.appendChild(ta);
+      ta.select();
+      document.execCommand("copy");
+      ta.remove();
+      showToast("Копирано ✅");
     }
+  });
 
-    const baseCost = costToMe + consultants;           // B (без ДДС)
-    const sellEx = baseCost / (1 - m);                 // S (без ДДС)
-    const sellInc = sellEx * (1 + VAT);
+  // init margin defaults
+  setMode("margin");
+  setMarginPct(20);
+  recalcFrom("margin");
 
-    const profitTotal = sellEx - baseCost;             // обща печалба над B
-    const firmProfit  = sellEx - costToMe - consultants; // печалба за фирмата (над costToMe и след консултанти)
+  // hash open
+  (function(){
+    const h = (location.hash || "").toLowerCase();
+    if(h.includes("fx")) activateTab("fx");
+    else if(h.includes("resto") || h.includes("change")) activateTab("change");
+    else activateTab("margin");
+  })();
 
-    const isWarn = consultants > firmProfit;
-
-    // equivalents
-    const sellBGN = toBGN(sellEx, ccy);
-    const sellIncBGN = toBGN(sellInc, ccy);
-
-    mOut.innerHTML = `
-      <div class="ok big">✅ Цена към клиента (без ДДС): ${q2(sellEx)} ${ccy}</div>
-      <div class="mut"><b>Цена с ДДС:</b> ${q2(sellInc)} ${ccy}</div>
-      <div class="hr"></div>
-      <div class="mut"><b>Cost to me:</b> ${q2(costToMe)} ${ccy}</div>
-      <div class="mut"><b>Консултанти:</b> ${q2(consultants)} ${ccy}</div>
-      <div class="mut"><b>Base (Cost+Consultants):</b> ${q2(baseCost)} ${ccy}</div>
-      <div class="hr"></div>
-      <div class="mut"><b>Обща печалба (над Base):</b> ${q2(profitTotal)} ${ccy}</div>
-      <div class="mut"><b>Печалба за фирмата:</b> ${q2(firmProfit)} ${ccy} ${warnIcon(isWarn)} ${isWarn ? '<span class="warn">Консултантите надвишават печалбата за фирмата.</span>' : ''}</div>
-      <div class="mut"><b>Марж:</b> ${q2((profitTotal / sellEx) * 100)}%</div>
-      <div class="hr"></div>
-      <div class="mut"><b>Еквивалент (без ДДС):</b> ${q2(fromBGN(sellBGN,'BGN'))} BGN / ${q2(fromBGN(sellBGN,'EUR'))} EUR</div>
-      <div class="mut"><b>Еквивалент (с ДДС):</b> ${q2(fromBGN(sellIncBGN,'BGN'))} BGN / ${q2(fromBGN(sellIncBGN,'EUR'))} EUR</div>
-    `;
+  // ---------- FX module ----------
+  const fx = {
+    bgn: $("fx_bgn"),
+    eur: $("fx_eur"),
+    rate: $("fx_rate"),
+    clear: $("fx_clear"),
+    lock: null
   };
-
-  const calcCheckMargin = () => {
-    const costToMe = parseNum(mCost2.value);
-    const ccy  = mCcy2.value;
-    const consultants = Number.isFinite(parseNum(mConsult2.value)) ? parseNum(mConsult2.value) : 0;
-    const sellInput = parseNum(mSell2.value);
-    const sellMode = mSellMode2.value; // ex or inc
-    const targ = parseNum(mTarget2.value);
-
-    if (!Number.isFinite(costToMe) || !Number.isFinite(sellInput)) {
-      mOut.innerHTML = `<div class="bad">❌ Невалиден разход или цена към клиента.</div>`;
-      return;
+  function fxRecalc(source){
+    const rate = toNum(fx.rate.value) || 1.95583;
+    if(source === "bgn"){
+      const b = toNum(fx.bgn.value);
+      fx.eur.value = fmt2(b / rate);
+    } else if(source === "eur"){
+      const e = toNum(fx.eur.value);
+      fx.bgn.value = fmt2(e * rate);
+    } else {
+      // default keep bgn and compute eur
+      const b = toNum(fx.bgn.value);
+      fx.eur.value = fmt2(b / rate);
     }
-    if (sellInput <= 0) {
-      mOut.innerHTML = `<div class="bad">❌ Цената трябва да е > 0.</div>`;
-      return;
+  }
+  fx.bgn.addEventListener("input", ()=> fxRecalc("bgn"));
+  fx.eur.addEventListener("input", ()=> fxRecalc("eur"));
+  fx.rate.addEventListener("input", ()=> fxRecalc("bgn"));
+  fx.clear.addEventListener("click", ()=>{
+    fx.bgn.value = "";
+    fx.eur.value = "";
+    fx.rate.value = "1.95583";
+  });
+
+  // ---------- Change module ----------
+  const c = {
+    priceBGN: $("c_price_bgn"),
+    priceEUR: $("c_price_eur"),
+    paidBGN: $("c_paid_bgn"),
+    paidEUR: $("c_paid_eur"),
+    rate: $("c_rate"),
+    ret: $("c_return_currency"),
+    totalBGN: $("c_total_bgn"),
+    totalEUR: $("c_total_eur"),
+    changeMain: $("c_change_main"),
+    changeBGN: $("c_change_bgn"),
+    changeEUR: $("c_change_eur"),
+    warn: $("c_warn"),
+    clear: $("c_clear")
+  };
+
+  function changeRecalc(){
+    const rate = toNum(c.rate.value) || 1.95583;
+
+    // Determine price in BGN (if user fills EUR only -> convert)
+    const price_bgn = toNum(c.priceBGN.value);
+    const price_eur = toNum(c.priceEUR.value);
+
+    let totalBGN = 0;
+    if(price_bgn > 0) totalBGN = price_bgn;
+    else if(price_eur > 0) totalBGN = price_eur * rate;
+    else totalBGN = 0;
+
+    const totalEUR = rate > 0 ? (totalBGN / rate) : 0;
+
+    // Determine paid in BGN (if paid in EUR only -> convert)
+    const paid_bgn = toNum(c.paidBGN.value);
+    const paid_eur = toNum(c.paidEUR.value);
+
+    let paidBGN = 0;
+    if(paid_bgn > 0) paidBGN = paid_bgn;
+    else if(paid_eur > 0) paidBGN = paid_eur * rate;
+    else paidBGN = 0;
+
+    const changeBGN = paidBGN - totalBGN;
+    const changeEUR = rate > 0 ? (changeBGN / rate) : 0;
+
+    c.totalBGN.textContent = fmt2(totalBGN) + " лв.";
+    c.totalEUR.textContent = fmt2(totalEUR) + " €";
+
+    const main = (c.ret.value === "EUR") ? (fmt2(changeEUR) + " €") : (fmt2(changeBGN) + " лв.");
+    c.changeMain.textContent = main;
+
+    c.changeBGN.textContent = fmt2(changeBGN) + " лв.";
+    c.changeEUR.textContent = fmt2(changeEUR) + " €";
+
+    c.warn.style.display = "none";
+    c.warn.textContent = "";
+    if(changeBGN < -0.00001){
+      c.warn.style.display = "block";
+      c.warn.textContent = "⚠️ Платената сума е по-малка от цената (недостатъчно плащане).";
     }
+  }
 
-    const sellEx = (sellMode === 'inc') ? (sellInput / (1 + VAT)) : sellInput;
-    const sellInc = sellEx * (1 + VAT);
-
-    const baseCost = costToMe + consultants;
-    const profitTotal = sellEx - baseCost;
-    const margin = (profitTotal / sellEx) * 100;
-
-    const firmProfit  = sellEx - costToMe - consultants;
-    const isWarn = consultants > firmProfit;
-
-    const okVsTarget = Number.isFinite(targ)
-      ? (margin >= targ ? `<span class="ok">✅ над/равно на целта</span>` : `<span class="bad">❌ под целта</span>`)
-      : '';
-
-    mOut.innerHTML = `
-      <div class="big">${profitTotal >= 0 ? '✅' : '❌'} Реален марж (без ДДС): <b>${q2(margin)}%</b> ${okVsTarget ? '• ' + okVsTarget : ''}</div>
-      <div class="mut"><b>Цена без ДДС:</b> ${q2(sellEx)} ${ccy} • <b>Цена с ДДС:</b> ${q2(sellInc)} ${ccy}</div>
-      <div class="hr"></div>
-      <div class="mut"><b>Cost to me:</b> ${q2(costToMe)} ${ccy}</div>
-      <div class="mut"><b>Консултанти:</b> ${q2(consultants)} ${ccy}</div>
-      <div class="mut"><b>Base (Cost+Consultants):</b> ${q2(baseCost)} ${ccy}</div>
-      <div class="hr"></div>
-      <div class="mut"><b>Обща печалба (над Base):</b> ${q2(profitTotal)} ${ccy}</div>
-      <div class="mut"><b>Печалба за фирмата:</b> ${q2(firmProfit)} ${ccy} ${warnIcon(isWarn)} ${isWarn ? '<span class="warn">Консултантите надвишават печалбата за фирмата.</span>' : ''}</div>
-    `;
-  };
-
-  document.getElementById('mModeTarget').onclick = () => setMode('target');
-  document.getElementById('mModeCheck').onclick  = () => setMode('check');
-  document.getElementById('mCalcTarget').onclick = calcTargetMargin;
-  document.getElementById('mCalcCheck').onclick  = calcCheckMargin;
-
-  document.getElementById('mExampleTarget').onclick = () => {
-    mCost.value = "7500";
-    mCostCcy.value = "BGN";
-    mConsult.value = "2500";
-    mTarget.value = "20";
-    calcTargetMargin();
-  };
-
-  document.getElementById('mExampleCheck').onclick = () => {
-    mCost2.value = "7500";
-    mCcy2.value = "BGN";
-    mConsult2.value = "2500";
-    mSell2.value = "12500";
-    mSellMode2.value = "ex";
-    mTarget2.value = "20";
-    calcCheckMargin();
-  };
-
-  document.getElementById('mClear').onclick = () => {
-    amt.value = ""; price.value = ""; paid.value = "";
-    mCost.value = ""; mConsult.value = ""; mTarget.value = "";
-    mCost2.value = ""; mConsult2.value = ""; mSell2.value = ""; mTarget2.value = "";
-    convOut.innerHTML = `<div class="mut">Въведи сума и натисни Convert.</div>`;
-    changeOut.innerHTML = `<div class="mut">Попълни цена и платено и натисни Calculate change.</div>`;
-    mOut.innerHTML = `<div class="mut">Избери Target или Check.</div>`;
-  };
-
-  // sensible defaults
-  fromCcy.value = "BGN";
-  toCcy.value = "EUR";
-  priceCcy.value = "BGN";
-  paidCcy.value = "EUR";
-  autoReturn();
-
-  mCostCcy.value = "BGN";
-  mCcy2.value = "BGN";
-  setMode('target');
+  [c.priceBGN, c.priceEUR, c.paidBGN, c.paidEUR, c.rate, c.ret].forEach(el => el.addEventListener("input", changeRecalc));
+  c.clear.addEventListener("click", ()=>{
+    c.priceBGN.value="";
+    c.priceEUR.value="";
+    c.paidBGN.value="";
+    c.paidEUR.value="";
+    c.rate.value="1.95583";
+    c.ret.value="BGN";
+    changeRecalc();
+  });
+  changeRecalc();
 </script>
 </body>
 </html>
